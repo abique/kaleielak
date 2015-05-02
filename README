@@ -1,4 +1,4 @@
 Drawing principle:
 
  - each node is centered on (0, 0)
- 
+ - the size of the drawing area is 1x1

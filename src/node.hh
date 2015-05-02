@@ -1,22 +1,38 @@
 #ifndef NODE_HH
 # define NODE_HH
 
+# include <cmath>
+
 # include <cairo/cairo.h>
 
-# include <mimosa/ref-countable.hh>
 # include <mimosa/intrusive-dlist.hh>
 
-class Node : public mimosa::RefCountable<Node>
+# include "value.hh"
+
+class Node
 {
 public:
-  MIMOSA_DEF_PTR(Node);
+  /* Constructor and Destructor */
+  inline Node() {}
+  inline virtual ~Node() {
+    while (!childs_.empty()) {
+      auto node = childs_.front();
+      childs_.popFront();
+      delete node;
+    }
+  }
 
-  inline virtual ~Node() {}
+  /* Rendering */
+  inline virtual void draw(cairo_t *cr) {
+    for (auto it = childs_.begin(); it != childs_.end(); ++it)
+    it->draw(cr);
+  }
 
-  inline virtual void draw(cairo_t *cr) {}
+  inline void addChild(Node *node) { childs_.pushBack(node); }
 
-  mimosa::IntrusiveDListHook<Node::Ptr> dl_;
-  typedef mimosa::IntrusiveDList<Node, Node::Ptr, &Node::dl_> List;
+  /* Tree structure */
+  mimosa::IntrusiveDListHook<Node *> dl_;
+  mimosa::IntrusiveDList<Node, Node *, &Node::dl_> childs_;
 };
 
 #endif /* !NODE_HH */

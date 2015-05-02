@@ -15,10 +15,12 @@ public:
   Kaleielak(const std::string & config);
   ~Kaleielak();
 
+  void draw();
+
 private:
   cairo_surface_t *surface_;
   cairo_t         *cr_;
-  Transform::Ptr   root_;
+  Transform       *root_;
 
   uint32_t width_;
   uint32_t height_;

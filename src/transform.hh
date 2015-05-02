@@ -6,15 +6,14 @@
 class Transform : public Node
 {
 public:
-  MIMOSA_DEF_PTR(Transform);
-
   inline Transform() : Node() { cairo_matrix_init_identity(&m_); }
+
+  inline ~Transform() {}
 
   inline virtual void draw(cairo_t *cr) override {
     cairo_save(cr);
     cairo_transform(cr, &m_);
-    for (auto it = nodes_.begin(); it != nodes_.end(); ++it)
-      it->draw(cr);
+    Node::draw(cr);
     cairo_restore(cr);
   }
 
@@ -30,8 +29,7 @@ public:
     cairo_matrix_scale(&m_, sx, sy);
   }
 
-private:
-  mimosa::IntrusiveDList<Node, Node::Ptr, &Node::dl_> nodes_;
+protected:
   cairo_matrix_t m_;
 };
 
