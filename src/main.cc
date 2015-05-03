@@ -7,7 +7,8 @@ int main(int argc, char **argv)
   mimosa::init(argc, argv);
 
   Kaleielak k("");
-  k.draw();
+  for (int i = 0; i < 50; ++i)
+    k.draw();
 
   mimosa::deinit();
   return 0;
