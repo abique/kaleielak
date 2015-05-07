@@ -46,8 +46,8 @@ class Value
 public:
   inline Value(const Value & v) : value_(v.value_ ? v.value_->clone() : nullptr) {}
   inline Value(double val = 0) : value_(new DirectValue<double>(val)) {}
-  inline Value(double *val) : value_(new IndirectValue<double>(val)) {}
-  inline Value(uint32_t *val) : value_(new IndirectValue<uint32_t>(val)) {}
+  inline Value(const double *val) : value_(new IndirectValue<const double>(val)) {}
+  inline Value(const uint32_t *val) : value_(new IndirectValue<const uint32_t>(val)) {}
   inline Value(AbstractValue *val) : value_(val) {}
   inline Value(Value && val) : value_(val.value_) { val.value_ = nullptr; }
   inline ~Value() { delete value_; }

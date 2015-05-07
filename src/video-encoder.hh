@@ -4,9 +4,6 @@
 # include <cstdint>
 # include <string>
 
-# include <vpx/vpx_encoder.h>
-# include <vpx/vp8cx.h>
-
 class VideoEncoder
 {
 public:
@@ -24,9 +21,6 @@ private:
   const uint32_t       height_;
   const uint32_t       fps_;
 
-  const vpx_codec_iface_t *iface_;
-  vpx_codec_ctx_t          ctx_;
-  vpx_codec_enc_cfg_t      cfg_;
 
   int                  frame_;
 };

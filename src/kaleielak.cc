@@ -1,19 +1,37 @@
 #include <cassert>
 
+#include <mimosa/options/options.hh>
+
 #include "kaleielak.hh"
 #include "transform.hh"
-#include "circle.hh"
-#include "repeat.hh"
+#include "scene.hh"
+#include "scene-factory.hh"
+
+std::string &SCENE = *mimosa::options::addOption<std::string>(
+  "scene", "scene", "", "");
+bool &LIST_SCENES = *mimosa::options::addSwitch(
+  "scene", "list-scenes", "list all the scenes");
+
+const std::string &TARGET = *mimosa::options::addOption<std::string>(
+  "rendering", "target", "movie, x11", "x11");
+const std::string &OUT = *mimosa::options::addOption<std::string>(
+  "rendering", "out", "output filename", "out.mp4");
+const uint32_t &WIDTH = *mimosa::options::addOption<uint32_t>(
+  "rendering", "width", "", 400);
+const uint32_t &HEIGHT = *mimosa::options::addOption<uint32_t>(
+  "rendering", "height", "", 400);
+const uint32_t &FPS = *mimosa::options::addOption<uint32_t>(
+  "rendering", "fps", "frames per seconds", 30);
 
 Kaleielak::Kaleielak(const std::string & config)
   : surface_(nullptr),
     cr_(nullptr),
     root_(nullptr),
-    width_(800),
-    height_(800),
-    fps_(30),
+    width_(WIDTH),
+    height_(HEIGHT),
+    fps_(FPS),
     frame_(0),
-    video_("video.vp9", width_, height_, fps_)
+    video_(OUT, HEIGHT, WIDTH, FPS)
 {
   surface_ = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width_, height_);
   assert(surface_);
@@ -26,14 +44,8 @@ Kaleielak::Kaleielak(const std::string & config)
   tr->scale(width_, height_);
   tr->translate(0.5, 0.5);
 
-  RepeatedTransform *rep = new RepeatedTransform(12);
-  rep->rotate(2 * M_PI / 12);
-  AbstractValue *v = new AddValue(&rep->i_, 1);
-  v = new DivValue(v, &rep->count_);
-  v = new MulValue(v, &frame_);
-  v = new AddValue(0.10, new MulValue(0.005, v));
-  rep->addChild(new Circle(0, 0.3, v));
-  tr->addChild(rep);
+  auto scene = SceneFactory::create("circles1", *this);
+  tr->addChild(scene);
 
   root_ = tr;
 }

@@ -18,7 +18,6 @@ public:
 
   void draw();
 
-private:
   cairo_surface_t *surface_;
   cairo_t         *cr_;
   Transform       *root_;
