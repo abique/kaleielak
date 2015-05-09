@@ -12,7 +12,7 @@ Circles1::Circles1(const Kaleielak & k)
   AbstractValue *v = new AddValue(&rep->i_, 1);
   v = new DivValue(v, &rep->count_);
   v = new MulValue(v, &kaleielak_.frame_);
-  v = new AddValue(0.10, new MulValue(0.005, v));
+  v = new AddValue(0.10, new MulValue(0.002, v));
   rep->addChild(new Circle(0, 0.3, v));
 
   addChild(rep);

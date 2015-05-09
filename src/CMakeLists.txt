@@ -18,6 +18,7 @@ target_link_libraries(kaleielak
   #/home/abique/develop/ffmpeg/build/libavutil/libavutil.a
   #va
 
+  swscale
   avcodec
   avutil
 

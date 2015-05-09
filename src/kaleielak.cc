@@ -22,6 +22,8 @@ const uint32_t &HEIGHT = *mimosa::options::addOption<uint32_t>(
   "rendering", "height", "", 400);
 const uint32_t &FPS = *mimosa::options::addOption<uint32_t>(
   "rendering", "fps", "frames per seconds", 30);
+const uint32_t &LENGTH = *mimosa::options::addOption<uint32_t>(
+  "rendering", "length", "duration in seconds", 10);
 
 Kaleielak::Kaleielak(const std::string & config)
   : surface_(nullptr),
@@ -58,6 +60,13 @@ Kaleielak::~Kaleielak()
     cairo_destroy(cr_);
   if (surface_)
     cairo_surface_destroy(surface_);
+}
+
+void
+Kaleielak::render()
+{
+  for (frame_ = 0; frame_ < LENGTH * FPS;)
+    draw();
 }
 
 void

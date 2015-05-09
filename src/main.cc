@@ -22,8 +22,7 @@ int main(int argc, char **argv)
   avcodec_register_all();
 
   Kaleielak k("");
-  for (int i = 0; i < 50; ++i)
-    k.draw();
+  k.render();
 
   mimosa::deinit();
   return 0;

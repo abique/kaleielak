@@ -6,6 +6,7 @@
 
 extern "C" {
 # include <libavcodec/avcodec.h>
+# include <libswscale/swscale.h>
 }
 
 # include <mimosa/stream/fd-stream.hh>
@@ -27,12 +28,16 @@ private:
   const uint32_t    width_;
   const uint32_t    height_;
   const uint32_t    fps_;
+  AVPixelFormat     src_fmt_;
+  AVPixelFormat     dst_fmt_;
 
   /* ffmpeg */
   AVCodec                       *codec_;
   AVCodecContext                *codec_ctx_;
-  AVFrame                       *frame_;
+  AVFrame                       *src_frame_;
+  AVFrame                       *dst_frame_;
   AVPacket                       packet_;
+  SwsContext                    *sws_;
   mimosa::stream::FdStream::Ptr  stream_;
 
   /* state */

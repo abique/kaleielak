@@ -17,6 +17,7 @@ public:
   ~Kaleielak();
 
   void draw();
+  void render();
 
   cairo_surface_t *surface_;
   cairo_t         *cr_;
