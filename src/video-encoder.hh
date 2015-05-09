@@ -4,6 +4,12 @@
 # include <cstdint>
 # include <string>
 
+extern "C" {
+# include <libavcodec/avcodec.h>
+}
+
+# include <mimosa/stream/fd-stream.hh>
+
 class VideoEncoder
 {
 public:
@@ -16,13 +22,21 @@ public:
   void encode(unsigned char *data);
 
 private:
-  const std::string    filename_;
-  const uint32_t       width_;
-  const uint32_t       height_;
-  const uint32_t       fps_;
+  /* settings */
+  const std::string filename_;
+  const uint32_t    width_;
+  const uint32_t    height_;
+  const uint32_t    fps_;
 
+  /* ffmpeg */
+  AVCodec                       *codec_;
+  AVCodecContext                *codec_ctx_;
+  AVFrame                       *frame_;
+  AVPacket                       packet_;
+  mimosa::stream::FdStream::Ptr  stream_;
 
-  int                  frame_;
+  /* state */
+  int64_t frame_count_;
 };
 
 #endif /* !VIDEO_ENCODER_HH */

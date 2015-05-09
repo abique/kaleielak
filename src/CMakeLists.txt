@@ -8,7 +8,18 @@ add_executable(kaleielak
   main.cc)
 
 target_link_libraries(kaleielak
-  cairo
+
+  # FFMPEG Debug style
+  #/home/abique/develop/ffmpeg/build/libavformat/libavformat.a
+  #/home/abique/develop/ffmpeg/build/libavdevice/libavdevice.a
+  #/home/abique/develop/ffmpeg/build/libavfilter/libavfilter.a
+  #/home/abique/develop/ffmpeg/build/libavcodec/libavcodec.a
+  #/home/abique/develop/ffmpeg/build/libswresample/libswresample.a
+  #/home/abique/develop/ffmpeg/build/libavutil/libavutil.a
+  #va
+
   avcodec
-  vpx
+  avutil
+
+  cairo
   mimosa)
