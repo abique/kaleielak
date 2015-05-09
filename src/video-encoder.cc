@@ -46,9 +46,9 @@ VideoEncoder::VideoEncoder(const std::string & filename,
   codec_ctx_->time_base.num = 1;
   codec_ctx_->time_base.den = fps;
   codec_ctx_->pix_fmt = dst_fmt_;
-  codec_ctx_->gop_size = 10;
+  codec_ctx_->gop_size = 4;
   codec_ctx_->max_b_frames = 1;
-  codec_ctx_->bit_rate = 400000;
+  codec_ctx_->bit_rate = 1200000;
 
   if (avcodec_open2(codec_ctx_, codec_, nullptr) < 0) {
     mimosa::log::fatal("failed to instantiate the codec");

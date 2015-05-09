@@ -9,6 +9,7 @@ class Scene;
 class SceneFactory
 {
 public:
+  static void list();
   static Scene *create(const std::string & name, Kaleielak & k);
 };
 

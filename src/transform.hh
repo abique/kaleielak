@@ -29,7 +29,6 @@ public:
     cairo_matrix_scale(&m_, sx, sy);
   }
 
-protected:
   cairo_matrix_t m_;
 };
 

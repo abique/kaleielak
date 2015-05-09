@@ -4,6 +4,8 @@ add_executable(kaleielak
 
   scene-factory.cc
   scenes/circles1.cc
+  scenes/golden-spiral.cc
+  scenes/golden-flower.cc
 
   main.cc)
 

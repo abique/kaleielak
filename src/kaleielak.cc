@@ -1,6 +1,7 @@
 #include <cassert>
 
 #include <mimosa/options/options.hh>
+#include <mimosa/log/log.hh>
 
 #include "kaleielak.hh"
 #include "transform.hh"
@@ -8,7 +9,7 @@
 #include "scene-factory.hh"
 
 std::string &SCENE = *mimosa::options::addOption<std::string>(
-  "scene", "scene", "", "");
+  "scene", "scene", "", "GoldenFlower");
 bool &LIST_SCENES = *mimosa::options::addSwitch(
   "scene", "list-scenes", "list all the scenes");
 
@@ -46,7 +47,7 @@ Kaleielak::Kaleielak(const std::string & config)
   tr->scale(width_, height_);
   tr->translate(0.5, 0.5);
 
-  auto scene = SceneFactory::create("circles1", *this);
+  auto scene = SceneFactory::create(SCENE, *this);
   tr->addChild(scene);
 
   root_ = tr;
@@ -65,8 +66,11 @@ Kaleielak::~Kaleielak()
 void
 Kaleielak::render()
 {
-  for (frame_ = 0; frame_ < LENGTH * FPS;)
+  for (frame_ = 0; frame_ < LENGTH * FPS;) {
+    if (!(frame_ % FPS))
+      mimosa::log::info("frame %d", frame_);
     draw();
+  }
 }
 
 void
@@ -80,7 +84,7 @@ Kaleielak::draw()
   cairo_paint(cr_);
 
   cairo_set_source_rgb(cr_, 1, 0.95, 0.15);
-  cairo_set_line_width(cr_, 0.01);
+  cairo_set_line_width(cr_, 0.001);
   root_->draw(cr_);
   cairo_surface_flush(surface_);
   //cairo_surface_write_to_png(surface_, filename);

@@ -6,7 +6,7 @@
 class Circle : public Node
 {
 public:
-  inline Circle(double x, double y, Value radius)
+  inline Circle(Value x, Value y, Value radius)
     : Node(), x_(x), y_(y), radius_(radius)
   {
   }
@@ -17,8 +17,8 @@ public:
     cairo_stroke(cr);
   }
 
-  double x_;
-  double y_;
+  Value x_;
+  Value y_;
   Value radius_;
 };
 
