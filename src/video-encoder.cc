@@ -24,9 +24,9 @@ VideoEncoder::VideoEncoder(const std::string & filename,
     frame_(nullptr),
     frame_count_(0)
 {
-  codec_ = avcodec_find_encoder(AV_CODEC_ID_HEVC);
+  codec_ = avcodec_find_encoder(AV_CODEC_ID_H264);
   if (!codec_) {
-    mimosa::log::fatal("failed to open h264 codec");
+    mimosa::log::fatal("failed to open the codec");
     std::abort();
   }
 
@@ -40,10 +40,10 @@ VideoEncoder::VideoEncoder(const std::string & filename,
   codec_ctx_->height = height;
   codec_ctx_->time_base.num = 1;
   codec_ctx_->time_base.den = fps;
-  codec_ctx_->pix_fmt = AV_PIX_FMT_0RGB;
+  codec_ctx_->pix_fmt = AV_PIX_FMT_YUV420P;//AV_PIX_FMT_0RGB;
   codec_ctx_->gop_size = 10;
-  //codec_ctx_->max_b_frames = 1;
-  //codec_ctx_->bit_rate = 8000000;
+  codec_ctx_->max_b_frames = 1;
+  codec_ctx_->bit_rate = 400000;
 
   if (avcodec_open2(codec_ctx_, codec_, nullptr) < 0) {
     mimosa::log::fatal("failed to instantiate the codec");
@@ -64,23 +64,22 @@ VideoEncoder::VideoEncoder(const std::string & filename,
   }
 
   int ret = av_image_alloc(frame_->data, frame_->linesize,
-                           width, height, AV_PIX_FMT_RGB32, 32);
+                           width, height, AV_PIX_FMT_YUV420P, 32);
   if (ret < 0) {
     mimosa::log::fatal("could not allocate an image buffer");
     std::abort();
   }
   frame_->width = width;
   frame_->height = height;
-  frame_->format = AV_PIX_FMT_RGB32;
+  frame_->format = AV_PIX_FMT_YUV420P;
 
   memset(&packet_, 0, sizeof (packet_));
-  //frame_->linesize[0] = 4 * width_;
 }
 
 VideoEncoder::~VideoEncoder()
 {
   for (int got_packet = 1; got_packet;) {
-    int ret = avcodec_encode_video2(codec_ctx_, &packet_, frame_, &got_packet);
+    int ret = avcodec_encode_video2(codec_ctx_, &packet_, nullptr, &got_packet);
     if (ret < 0) {
       mimosa::log::fatal("failed to encode video");
       std::abort();
@@ -105,7 +104,7 @@ VideoEncoder::encode(unsigned char *data)
   packet_.data = nullptr;
   packet_.size = 0;
 
-  memcpy(frame_->data[0], data, 4 * width_ * height_);
+  //memcpy(frame_->data[0], data, 4 * width_ * height_);
   //frame_->data[0] = data;
   frame_->pts = frame_count_;
 

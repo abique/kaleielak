@@ -74,7 +74,7 @@ Kaleielak::draw()
   cairo_set_line_width(cr_, 0.01);
   root_->draw(cr_);
   cairo_surface_flush(surface_);
-  cairo_surface_write_to_png(surface_, filename);
+  //cairo_surface_write_to_png(surface_, filename);
   video_.encode(cairo_image_surface_get_data(surface_));
 
   ++frame_;
