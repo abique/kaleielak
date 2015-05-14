@@ -76,9 +76,6 @@ Kaleielak::render()
 void
 Kaleielak::draw()
 {
-  char filename[64];
-
-  snprintf(filename, sizeof (filename), "out-%06d.png", frame_);
 
   cairo_set_source_rgb(cr_, 0, 0, 0);
   cairo_paint(cr_);
@@ -87,8 +84,16 @@ Kaleielak::draw()
   cairo_set_line_width(cr_, 0.001);
   root_->draw(cr_);
   cairo_surface_flush(surface_);
-  //cairo_surface_write_to_png(surface_, filename);
-  video_.encode(cairo_image_surface_get_data(surface_));
+
+  // if (SAVE_IMAGE) {
+  //   char filename[64];
+  //   snprintf(filename, sizeof (filename), "out-%06d.png", frame_);
+  //   cairo_surface_write_to_png(surface_, filename);
+  // }
+
+  // if (SAVE_VIDEO) {
+    video_.encode(cairo_image_surface_get_data(surface_));
+  // }
 
   ++frame_;
 }

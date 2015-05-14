@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 
 project(KALEIELAK C CXX)
 
-add_definitions(-std=c++11)
+add_definitions(-std=c++11 -fopenmp)
 
 # cinder? openframework?
 find_package(PkgConfig)

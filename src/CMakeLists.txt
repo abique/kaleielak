@@ -2,10 +2,13 @@ add_executable(kaleielak
   kaleielak.cc
   video-encoder.cc
 
+  mandelbrot.cc
+
   scene-factory.cc
   scenes/circles1.cc
   scenes/golden-spiral.cc
   scenes/golden-flower.cc
+  scenes/mandel1.cc
 
   main.cc)
 
