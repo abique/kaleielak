@@ -3,6 +3,7 @@
 
 # include <cstdint>
 # include <string>
+# include <memory>
 
 # include <cairo/cairo.h>
 
@@ -28,7 +29,7 @@ public:
   uint32_t fps_;
   uint32_t frame_;
 
-  VideoEncoder video_;
+  std::unique_ptr<VideoEncoder> video_;
 };
 
 #endif /* !KALEIELAK_HH */

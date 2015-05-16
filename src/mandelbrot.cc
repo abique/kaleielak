@@ -4,7 +4,8 @@
 #include "mandelbrot.hh"
 
 Mandelbrot::Mandelbrot(int w, int h, Value x, Value y,
-                       Value scale, Value power, Value max_iter)
+                       Value scale, Value power, Value max_iter,
+                       Value cutoff)
   : w_(w),
     h_(h),
     surf_(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h)),
@@ -13,7 +14,8 @@ Mandelbrot::Mandelbrot(int w, int h, Value x, Value y,
     y_(y),
     scale_(scale),
     power_(power),
-    max_iter_(max_iter)
+    max_iter_(max_iter),
+    cutoff_(cutoff)
 {
   assert(surf_);
   assert(rows_);
@@ -47,7 +49,8 @@ Mandelbrot::draw(cairo_t *cr) {
       std::complex<double> z(0, 0);
 
       int i;
-      for (i = 0; i < max_iter_ && std::norm(z) < 1; ++i)
+      const double cutoff = cutoff_;
+      for (i = 0; i < max_iter_ && std::norm(z) <= cutoff; ++i)
         z = std::pow(z, power_) + c;
 
       if (i == 0) {

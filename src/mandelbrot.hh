@@ -10,7 +10,8 @@
 class Mandelbrot : public Node
 {
 public:
-  Mandelbrot(int w, int h, Value x, Value y, Value scale, Value power, Value max_iter = 300);
+  Mandelbrot(int w, int h, Value x, Value y, Value scale, Value power,
+             Value max_iter = 300, Value cutoff = 12);
   virtual ~Mandelbrot() override;
 
   virtual void draw(cairo_t *cr) override;
@@ -26,6 +27,7 @@ public:
   Value                      scale_;
   Value                      power_;
   Value                      max_iter_;
+  Value                      cutoff_;
   Palette                    palette_;
 };
 

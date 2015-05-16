@@ -14,7 +14,7 @@ bool &LIST_SCENES = *mimosa::options::addSwitch(
   "scene", "list-scenes", "list all the scenes");
 
 const std::string &TARGET = *mimosa::options::addOption<std::string>(
-  "rendering", "target", "movie, x11", "x11");
+  "rendering", "target", "movie, x11, png", "x11");
 const std::string &OUT = *mimosa::options::addOption<std::string>(
   "rendering", "out", "output filename", "out.mp4");
 const uint32_t &WIDTH = *mimosa::options::addOption<uint32_t>(
@@ -34,7 +34,7 @@ Kaleielak::Kaleielak(const std::string & config)
     height_(HEIGHT),
     fps_(FPS),
     frame_(0),
-    video_(OUT, HEIGHT, WIDTH, FPS)
+    video_(TARGET == "movie" ? new VideoEncoder(OUT, HEIGHT, WIDTH, FPS) : nullptr)
 {
   surface_ = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width_, height_);
   assert(surface_);
@@ -66,10 +66,22 @@ Kaleielak::~Kaleielak()
 void
 Kaleielak::render()
 {
-  for (frame_ = 0; frame_ < LENGTH * FPS;) {
+  for (frame_ = 0; true; ++frame_) {
     if (!(frame_ % FPS))
       mimosa::log::info("frame %d", frame_);
     draw();
+
+    if (TARGET == "movie") {
+      video_->encode(cairo_image_surface_get_data(surface_));
+      if (frame_ >= LENGTH * FPS)
+        break;
+    } else if (TARGET == "png") {
+      cairo_surface_write_to_png(surface_, OUT.c_str());
+      break;
+    } else {
+      mimosa::log::error("Unknown target: %s", TARGET);
+      break;
+    }
   }
 }
 
@@ -84,16 +96,4 @@ Kaleielak::draw()
   cairo_set_line_width(cr_, 0.001);
   root_->draw(cr_);
   cairo_surface_flush(surface_);
-
-  // if (SAVE_IMAGE) {
-  //   char filename[64];
-  //   snprintf(filename, sizeof (filename), "out-%06d.png", frame_);
-  //   cairo_surface_write_to_png(surface_, filename);
-  // }
-
-  // if (SAVE_VIDEO) {
-    video_.encode(cairo_image_surface_get_data(surface_));
-  // }
-
-  ++frame_;
 }
