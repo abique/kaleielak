@@ -1,21 +1,25 @@
-#ifndef MANDELBROT_HH
-# define MANDELBROT_HH
+#ifndef JULIA_HH
+# define JULIA_HH
 
 # include <memory>
+# include <complex>
+# include <functional>
 
 # include "node.hh"
 # include "palette.hh"
 
-/* rename to multibrot */
-class Mandelbrot : public Node
+class Julia : public Node
 {
 public:
-  Mandelbrot(int w, int h);
-  virtual ~Mandelbrot() override;
+  Julia(int w, int h);
+  virtual ~Julia() override;
 
   virtual void draw(cairo_t *cr) override;
 
   Pixel color(int iter);
+
+  typedef std::function<
+    std::complex<double> (std::complex<double>)> fct_type;
 
   cairo_surface_t  *surf_;
   const int         w_;         // surface width
@@ -24,10 +28,10 @@ public:
   Value             x_;
   Value             y_;
   Value             scale_;
-  Value             power_;
   Value             max_iter_;
   Value             cutoff_;
   Palette           palette_;
+  fct_type          rpoly_;
 };
 
-#endif /* !MANDELBROT_HH */
+#endif /* !JULIA_HH */

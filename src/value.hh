@@ -9,8 +9,8 @@ class AbstractValue : public mimosa::NonCopyable
 {
 public:
   inline virtual ~AbstractValue() {}
-  inline virtual double get() const = 0;
-  inline virtual AbstractValue *clone() const = 0;
+  virtual double get() const = 0;
+  virtual AbstractValue *clone() const = 0;
 };
 
 template <typename T>

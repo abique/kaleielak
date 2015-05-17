@@ -8,6 +8,7 @@
 #include "scenes/golden-flower.hh"
 #include "scenes/golden-spiral.hh"
 #include "scenes/mandel1.hh"
+#include "scenes/julia1.hh"
 
 struct {
   std::string name;
@@ -21,6 +22,7 @@ struct {
   ENTRY(GoldenFlower),
   ENTRY(GoldenSpiral),
   ENTRY(Mandel1),
+  ENTRY(Julia1),
 };
 
 void

@@ -1,9 +1,9 @@
 #include <cassert>
 #include <complex>
 
-#include "mandelbrot.hh"
+#include "julia.hh"
 
-Mandelbrot::Mandelbrot(int w, int h)
+Julia::Julia(int w, int h)
   : w_(w),
     h_(h),
     surf_(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h)),
@@ -11,9 +11,9 @@ Mandelbrot::Mandelbrot(int w, int h)
     x_(0),
     y_(0),
     scale_(1),
-    power_(1),
-    max_iter_(50),
-    cutoff_(32)
+    max_iter_(100),
+    cutoff_(1),
+    rpoly_([] (std::complex<double> z) { return z; })
 {
   assert(surf_);
   assert(rows_);
@@ -25,14 +25,14 @@ Mandelbrot::Mandelbrot(int w, int h)
   }
 }
 
-Mandelbrot::~Mandelbrot()
+Julia::~Julia()
 {
   cairo_surface_destroy(surf_);
   free(rows_);
 }
 
 void
-Mandelbrot::draw(cairo_t *cr) {
+Julia::draw(cairo_t *cr) {
   /* fill our image buffer */
   const double x0 = x_ - scale_;     // start
   const double xr = 2 * scale_ / (double)w_; // ramp
@@ -40,16 +40,15 @@ Mandelbrot::draw(cairo_t *cr) {
   const double y0 = y_ - scale_;     // start
   const double yr = 2 * scale_ / (double)h_; // ramp
 
-#pragma omp parallel for
+//#pragma omp parallel for
   for (int x = 0; x < w_; ++x) {
     for (int y = 0; y < h_; ++y) {
-      const std::complex<double> c(x0 + x * xr, y0 + y * yr);
-      std::complex<double> z(0, 0);
+      std::complex<double> z(x0 + x * xr, y0 + y * yr);
 
       int i;
       const double cutoff = cutoff_;
       for (i = 0; i < max_iter_ && std::norm(z) <= cutoff; ++i)
-        z = std::pow(z, power_) + c;
+        z = rpoly_(z);
 
       if (i == 0) {
         rows_[y][x] = color(i);
@@ -65,6 +64,8 @@ Mandelbrot::draw(cairo_t *cr) {
     }
   }
 
+  cairo_surface_write_to_png(surf_, "julia.png");
+
   cairo_save(cr);
   cairo_set_source_surface(cr, surf_, 0, 0);
   cairo_paint(cr);
@@ -72,7 +73,7 @@ Mandelbrot::draw(cairo_t *cr) {
 }
 
 Pixel
-Mandelbrot::color(int iter)
+Julia::color(int iter)
 {
   return palette_.color(iter);
 }
