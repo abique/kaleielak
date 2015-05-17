@@ -33,6 +33,9 @@ Julia::~Julia()
 
 void
 Julia::draw(cairo_t *cr) {
+
+  cairo_surface_flush(surf_);
+
   /* fill our image buffer */
   const double x0 = x_ - scale_;     // start
   const double xr = 2 * scale_ / (double)w_; // ramp
@@ -40,8 +43,9 @@ Julia::draw(cairo_t *cr) {
   const double y0 = y_ - scale_;     // start
   const double yr = 2 * scale_ / (double)h_; // ramp
 
-//#pragma omp parallel for
+#pragma omp parallel for
   for (int x = 0; x < w_; ++x) {
+#pragma omp parallel for
     for (int y = 0; y < h_; ++y) {
       std::complex<double> z(x0 + x * xr, y0 + y * yr);
 
@@ -64,9 +68,11 @@ Julia::draw(cairo_t *cr) {
     }
   }
 
-  cairo_surface_write_to_png(surf_, "julia.png");
+  cairo_surface_mark_dirty(surf_);
 
   cairo_save(cr);
+  cairo_scale(cr, 1.0 / w_, 1.0 / h_);
+  cairo_translate(cr, -w_ / 2.0, -h_ / 2.0);
   cairo_set_source_surface(cr, surf_, 0, 0);
   cairo_paint(cr);
   cairo_restore(cr);

@@ -88,7 +88,6 @@ Kaleielak::render()
 void
 Kaleielak::draw()
 {
-
   cairo_set_source_rgb(cr_, 0, 0, 0);
   cairo_paint(cr_);
 
