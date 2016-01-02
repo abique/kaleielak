@@ -29,7 +29,7 @@ VideoEncoder::VideoEncoder(const std::string & filename,
     sws_(nullptr),
     frame_count_(0)
 {
-  codec_ = avcodec_find_encoder(AV_CODEC_ID_H264);
+  codec_ = avcodec_find_encoder(AV_CODEC_ID_H265);
   if (!codec_) {
     mimosa::log::fatal("failed to open the codec");
     std::abort();
@@ -49,6 +49,7 @@ VideoEncoder::VideoEncoder(const std::string & filename,
   codec_ctx_->gop_size = 4;
   codec_ctx_->max_b_frames = 1;
   codec_ctx_->bit_rate = 1200000;
+  codec_ctx_->thread_type = FF_THREAD_FRAME;
 
   if (avcodec_open2(codec_ctx_, codec_, nullptr) < 0) {
     mimosa::log::fatal("failed to instantiate the codec");

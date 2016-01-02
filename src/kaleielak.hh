@@ -7,6 +7,8 @@
 
 # include <cairo/cairo.h>
 
+# include <sndfile.hh>
+
 # include "node.hh"
 # include "transform.hh"
 # include "video-encoder.hh"
@@ -30,6 +32,10 @@ public:
   uint32_t frame_;
 
   std::unique_ptr<VideoEncoder> video_;
+
+  SndfileHandle  audio_file_;
+  float         *audio_data_ = nullptr;
+  float         *audio_rms_  = nullptr;
 };
 
 #endif /* !KALEIELAK_HH */

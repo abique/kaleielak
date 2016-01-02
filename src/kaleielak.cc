@@ -26,6 +26,9 @@ const uint32_t &FPS = *mimosa::options::addOption<uint32_t>(
 const uint32_t &LENGTH = *mimosa::options::addOption<uint32_t>(
   "rendering", "length", "duration in seconds", 10);
 
+const std::string &AUDIO_IN = *mimosa::options::addOption<std::string>(
+  "input", "audio-in", "audio file to be played with the video", "");
+
 Kaleielak::Kaleielak(const std::string & config)
   : surface_(nullptr),
     cr_(nullptr),
@@ -34,13 +37,23 @@ Kaleielak::Kaleielak(const std::string & config)
     height_(HEIGHT),
     fps_(FPS),
     frame_(0),
-    video_(TARGET == "movie" ? new VideoEncoder(OUT, HEIGHT, WIDTH, FPS) : nullptr)
+    video_(TARGET == "movie" ? new VideoEncoder(OUT, WIDTH, HEIGHT, FPS) : nullptr),
+    audio_file_(AUDIO_IN)
 {
+  // load audio data
+  if (audio_file_) {
+    audio_data_ = (float *)::malloc(sizeof (*audio_data_) * audio_file_.channels() * audio_file_.frames());
+    audio_file_.readf(audio_data_, audio_file_.frames());
+  }
+
   surface_ = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width_, height_);
   assert(surface_);
 
   cr_ = cairo_create(surface_);
   assert(cr_);
+
+  // best anti aliasing
+  cairo_set_antialias(cr_, CAIRO_ANTIALIAS_BEST);
 
   // prepare the root node
   Transform *tr = new Transform;
@@ -69,7 +82,12 @@ Kaleielak::render()
   for (frame_ = 0; true; ++frame_) {
     if (!(frame_ % FPS))
       mimosa::log::info("frame %d", frame_);
+
+    mimosa::log::info("painting");
+
     draw();
+
+    mimosa::log::info("rendering to target");
 
     if (TARGET == "movie") {
       video_->encode(cairo_image_surface_get_data(surface_));

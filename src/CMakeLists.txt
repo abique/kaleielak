@@ -29,5 +29,8 @@ target_link_libraries(kaleielak
   avcodec
   avutil
 
+  sndfile
+
   cairo
-  mimosa)
+  mimosa
+  -fopenmp)

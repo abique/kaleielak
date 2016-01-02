@@ -57,10 +57,12 @@ Julia::draw(cairo_t *cr) {
       if (i == 0) {
         rows_[y][x] = color(i);
       } else {
-        double a = std::exp(-(std::norm(z) - 1));
+        //double norm = std::norm(z);
+        //double a = norm - std::ceil(norm);
+        double a = std::exp(-(std::norm(z) / cutoff - 1));
         double b = 1 - a;
-        Pixel p0 = color(i);
-        Pixel p1 = color(i - 1);
+        Pixel p1 = color(i);
+        Pixel p0 = color(i + 1);
         rows_[y][x] = Pixel(p0.r * a + p1.r * b,
                             p0.g * a + p1.g * b,
                             p0.b * a + p1.b * b);

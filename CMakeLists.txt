@@ -2,13 +2,14 @@ cmake_minimum_required(VERSION 3.2)
 
 project(KALEIELAK C CXX)
 
-add_definitions(-std=c++11 -fopenmp)
+add_definitions(-std=c++14 -fopenmp)
 
 # cinder? openframework?
 find_package(PkgConfig)
+find_package(OpenMP)
 
+pkg_check_modules(SNDFILE REQUIRED sndfile)
 pkg_check_modules(FFTW3 REQUIRED fftw3)
-pkg_check_modules(VPX REQUIRED vpx)
 pkg_check_modules(CAIRO REQUIRED cairo)
 
 include_directories(mimosa)
