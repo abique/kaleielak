@@ -162,6 +162,19 @@ private:
   Value v_;
 };
 
+class PowValue : public AbstractValue
+{
+public:
+  PowValue(Value x, Value y) : x_(x), y_(y) {}
+
+  inline virtual double get() const override { return std::pow(x_, y_); }
+  inline AbstractValue *clone() const override { return new PowValue(x_, y_); }
+
+private:
+  Value x_;
+  Value y_;
+};
+
 class ValueBuilder
 {
 public:

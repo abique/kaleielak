@@ -48,7 +48,7 @@ VideoEncoder::VideoEncoder(const std::string & filename,
   codec_ctx_->pix_fmt = dst_fmt_;
   codec_ctx_->gop_size = 4;
   codec_ctx_->max_b_frames = 1;
-  codec_ctx_->bit_rate = 1200000;
+  codec_ctx_->bit_rate = 120000000;
   codec_ctx_->thread_type = FF_THREAD_FRAME;
 
   if (avcodec_open2(codec_ctx_, codec_, nullptr) < 0) {
@@ -73,6 +73,7 @@ VideoEncoder::VideoEncoder(const std::string & filename,
   src_frame_->width = width;
   src_frame_->height = height;
   src_frame_->format = src_fmt_;
+  src_frame_->quality = 1;
 
   dst_frame_ = av_frame_alloc();
   if (!dst_frame_) {
@@ -89,6 +90,7 @@ VideoEncoder::VideoEncoder(const std::string & filename,
   dst_frame_->width = width;
   dst_frame_->height = height;
   dst_frame_->format = dst_fmt_;
+  dst_frame_->quality = 1;
 
   sws_ = sws_getContext(width, height, src_fmt_,
                         width, height, dst_fmt_,

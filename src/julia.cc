@@ -1,5 +1,6 @@
 #include <cassert>
 #include <complex>
+#include <iostream>
 
 #include "julia.hh"
 
@@ -8,15 +9,19 @@ Julia::Julia(int w, int h)
     h_(h),
     surf_(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h)),
     rows_((Pixel **)malloc(sizeof (*rows_) * h)),
+    iters_((uint32_t *)malloc(sizeof (*iters_) * w * h)),
+    norms_((double *)malloc(sizeof (*norms_) * w * h)),
     x_(0),
     y_(0),
     scale_(1),
-    max_iter_(100),
+    iter_limit_(10000),
     cutoff_(1),
-    rpoly_([] (std::complex<double> z) { return z; })
+    rpoly_([] (std::complex<float_type> z) { return z; })
 {
   assert(surf_);
   assert(rows_);
+  assert(iters_);
+  assert(norms_);
 
   const int stride = cairo_image_surface_get_stride(surf_);
   unsigned char *data = cairo_image_surface_get_data(surf_);
@@ -29,6 +34,7 @@ Julia::~Julia()
 {
   cairo_surface_destroy(surf_);
   free(rows_);
+  free(iters_);
 }
 
 void
@@ -36,37 +42,59 @@ Julia::draw(cairo_t *cr) {
 
   cairo_surface_flush(surf_);
 
-  /* fill our image buffer */
-  const double x0 = x_ - scale_;     // start
-  const double xr = 2 * scale_ / (double)w_; // ramp
+  std::cout << "scale: " << scale_ << std::endl;
 
-  const double y0 = y_ - scale_;     // start
-  const double yr = 2 * scale_ / (double)h_; // ramp
+  /* fill our image buffer */
+  const long double x0 = x_ - scale_;     // start
+  const long double xr = 2 * scale_ / (double)w_; // ramp
+
+  const long double y0 = y_ - scale_;     // start
+  const long double yr = 2 * scale_ / (double)h_; // ramp
+
+  uint32_t min_iter = iter_limit_;
+  uint32_t max_iter = 1;
+  const long double cutoff = cutoff_;
 
 #pragma omp parallel for
   for (int x = 0; x < w_; ++x) {
 #pragma omp parallel for
     for (int y = 0; y < h_; ++y) {
-      std::complex<double> z(x0 + x * xr, y0 + y * yr);
 
-      int i;
-      const double cutoff = cutoff_;
-      for (i = 0; i < max_iter_ && std::norm(z) <= cutoff; ++i)
-        z = rpoly_(z);
+      // super sampling
+      std::array<std::pair<uint32_t, float_type>, 9> super_iters;
+      for (int m = 0; m < 3; ++m) {
+        for (int n = 0; n < 3; ++n) {
+          std::complex<float_type> z(x0 + (x + m / 3.0) * xr, y0 + (y + n / 3.0) * yr);
 
-      if (i == 0) {
-        rows_[y][x] = color(i);
-      } else {
-        //double norm = std::norm(z);
-        //double a = norm - std::ceil(norm);
-        double a = std::exp(-(std::norm(z) / cutoff - 1));
-        double b = 1 - a;
-        Pixel p1 = color(i);
-        Pixel p0 = color(i + 1);
-        rows_[y][x] = Pixel(p0.r * a + p1.r * b,
-                            p0.g * a + p1.g * b,
-                            p0.b * a + p1.b * b);
+          uint32_t i;
+          for (i = 0; i < iter_limit_ && std::norm(z) <= cutoff; ++i)
+            z = rpoly_(z);
+          super_iters[m + 3 * n] = std::make_pair(i, std::norm(z));
+        }
       }
+      std::sort(super_iters.begin(), super_iters.end());
+
+      uint32_t i = super_iters[4].first;
+      if (min_iter > i)
+        min_iter = i;
+      if (max_iter < i)
+        max_iter = i;
+
+      iters_[y * w_ + x] = i;
+      norms_[y * w_ + x] = super_iters[4].second;
+    }
+  }
+
+  const long double log_div = std::log((long double)(max_iter + 1) / (long double)min_iter);
+#pragma omp parallel for
+  for (int x = 0; x < w_; ++x) {
+#pragma omp parallel for
+    for (int y = 0; y < h_; ++y) {
+      uint32_t i = iters_[y * w_ + x];
+      long double norm = norms_[y * w_ + x];
+
+      rows_[y][x] = palette_.gradient(std::log((long double)(i + std::exp(-(norm / cutoff - 1))) / (long double)min_iter) /
+                                      log_div);
     }
   }
 

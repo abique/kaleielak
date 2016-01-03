@@ -25,6 +25,8 @@ const uint32_t &FPS = *mimosa::options::addOption<uint32_t>(
   "rendering", "fps", "frames per seconds", 30);
 const uint32_t &LENGTH = *mimosa::options::addOption<uint32_t>(
   "rendering", "length", "duration in seconds", 10);
+const uint32_t &FRAME = *mimosa::options::addOption<uint32_t>(
+  "rendering", "frame", "frame offset", 0);
 
 const std::string &AUDIO_IN = *mimosa::options::addOption<std::string>(
   "input", "audio-in", "audio file to be played with the video", "");
@@ -79,7 +81,7 @@ Kaleielak::~Kaleielak()
 void
 Kaleielak::render()
 {
-  for (frame_ = 0; true; ++frame_) {
+  for (frame_ = FRAME; true; ++frame_) {
     if (!(frame_ % FPS))
       mimosa::log::info("frame %d", frame_);
 
