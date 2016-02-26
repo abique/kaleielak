@@ -13,8 +13,10 @@ std::string &SCENE = *mimosa::options::addOption<std::string>(
 bool &LIST_SCENES = *mimosa::options::addSwitch(
   "scene", "list-scenes", "list all the scenes");
 
+const std::string &IN = *mimosa::options::addOption<std::string>(
+  "input", "in", "path to the music", "");
 const std::string &TARGET = *mimosa::options::addOption<std::string>(
-  "rendering", "target", "movie, x11, png", "x11");
+  "rendering", "target", "movie, xcb, png", "x11");
 const std::string &OUT = *mimosa::options::addOption<std::string>(
   "rendering", "out", "output filename", "out.mp4");
 const uint32_t &WIDTH = *mimosa::options::addOption<uint32_t>(
@@ -98,6 +100,8 @@ Kaleielak::render()
     } else if (TARGET == "png") {
       cairo_surface_write_to_png(surface_, OUT.c_str());
       break;
+    } else if (TARGET == "xcb") {
+
     } else {
       mimosa::log::error("Unknown target: %s", TARGET);
       break;

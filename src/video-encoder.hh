@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef VIDEO_ENCODER_HH
 # define VIDEO_ENCODER_HH
 

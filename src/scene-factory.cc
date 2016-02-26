@@ -9,6 +9,7 @@
 #include "scenes/golden-spiral.hh"
 #include "scenes/mandel1.hh"
 #include "scenes/julia1.hh"
+#include "scenes/endless-knot.hh"
 
 struct {
   std::string name;
@@ -23,6 +24,7 @@ struct {
   ENTRY(GoldenSpiral),
   ENTRY(Mandel1),
   ENTRY(Julia1),
+  ENTRY(EndlessKnot),
 };
 
 void

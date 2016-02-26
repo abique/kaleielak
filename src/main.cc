@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 
 extern "C" {
 #include <libavutil/opt.h>
@@ -9,6 +10,7 @@ extern "C" {
 #include <libavutil/mathematics.h>
 #include <libavutil/samplefmt.h>
 }
+
 
 #include <mimosa/init.hh>
 

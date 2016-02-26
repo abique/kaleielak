@@ -8,6 +8,7 @@
 # include <cairo/cairo.h>
 
 # include <sndfile.hh>
+# include <fftw3.h>
 
 # include "node.hh"
 # include "transform.hh"
