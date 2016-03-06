@@ -46,6 +46,8 @@ Kaleielak::Kaleielak(const std::string & config)
   if (audio_file_) {
     audio_data_ = (float *)::malloc(sizeof (*audio_data_) * audio_file_.channels() * audio_file_.frames());
     audio_file_.readf(audio_data_, audio_file_.frames());
+
+    calculateVolume();
   }
 
   surface_ = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width_, height_);
@@ -117,4 +119,37 @@ Kaleielak::draw()
   cairo_set_line_width(cr_, 0.001);
   root_->draw(cr_);
   cairo_surface_flush(surface_);
+}
+
+void
+Kaleielak::calculateVolume()
+{
+  const int32_t window = audio_file_.samplerate() / 24;
+  const int32_t num_windows = audio_file_.frames() / window + 1;
+  const int32_t num_channels = audio_file_.channels();
+
+  audio_rms_ = (float *)malloc(sizeof (*audio_rms_) * (num_channels * num_windows));
+  audio_rms_window_ = window;
+  audio_rms_num_windows_ = num_windows;
+
+  // calculate RMS volume
+  for (int32_t w = 0; w < num_windows; ++w) {
+    double rms[num_channels];
+
+    // clear sum
+    for (int32_t c = 0; c < num_channels; ++c)
+      rms[c] = 0;
+
+    for (int32_t f = 0; f < audio_file_.frames(); ++f) {
+      for (int32_t c = 0; c < num_channels; ++c) {
+        double sample = audio_data_[f * num_channels + c];
+        rms[c] += sample * sample;
+      }
+    }
+
+    for (int32_t c = 0; c < num_channels; ++c) {
+      rms[c] = 20 * std::log10(std::sqrt(rms[c] / (double)window));
+      audio_rms_[w * num_channels + c] = rms[c];
+    }
+  }
 }
