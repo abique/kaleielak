@@ -1,4 +1,4 @@
-#include <cassert>
+﻿#include <cassert>
 #include <complex>
 #include <iostream>
 
@@ -60,28 +60,28 @@ Julia::draw(cairo_t *cr) {
 #pragma omp parallel for
     for (int y = 0; y < h_; ++y) {
 
-      // super sampling
-      std::array<std::pair<uint32_t, float_type>, 9> super_iters;
-      for (int m = 0; m < 3; ++m) {
-        for (int n = 0; n < 3; ++n) {
-          std::complex<float_type> z(x0 + (x + m / 3.0) * xr, y0 + (y + n / 3.0) * yr);
+      // super sampling 5x
+      std::array<std::pair<uint32_t, float_type>, 25> super_iters;
+      for (int m = 0; m < 5; ++m) {
+        for (int n = 0; n < 5; ++n) {
+          std::complex<float_type> z(x0 + (x + m / 5.0) * xr, y0 + (y + n / 5.0) * yr);
 
           uint32_t i;
           for (i = 0; i < iter_limit_ && std::norm(z) <= cutoff; ++i)
             z = rpoly_(z);
-          super_iters[m + 3 * n] = std::make_pair(i, std::norm(z));
+          super_iters[m + 5 * n] = std::make_pair(i, std::norm(z));
         }
       }
       std::sort(super_iters.begin(), super_iters.end());
 
-      uint32_t i = super_iters[4].first;
+      uint32_t i = super_iters[12].first;
       if (min_iter > i)
         min_iter = i;
       if (max_iter < i)
         max_iter = i;
 
       iters_[y * w_ + x] = i;
-      norms_[y * w_ + x] = super_iters[4].second;
+      norms_[y * w_ + x] = super_iters[12].second;
     }
   }
 

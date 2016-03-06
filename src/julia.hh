@@ -1,4 +1,4 @@
-#ifndef JULIA_HH
+﻿#ifndef JULIA_HH
 # define JULIA_HH
 
 # include <memory>

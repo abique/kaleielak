@@ -1,4 +1,4 @@
-#include <cassert>
+﻿#include <cassert>
 
 #include <mimosa/options/options.hh>
 #include <mimosa/log/log.hh>
@@ -13,8 +13,6 @@ std::string &SCENE = *mimosa::options::addOption<std::string>(
 bool &LIST_SCENES = *mimosa::options::addSwitch(
   "scene", "list-scenes", "list all the scenes");
 
-const std::string &IN = *mimosa::options::addOption<std::string>(
-  "input", "in", "path to the music", "");
 const std::string &TARGET = *mimosa::options::addOption<std::string>(
   "rendering", "target", "movie, xcb, png", "x11");
 const std::string &OUT = *mimosa::options::addOption<std::string>(

@@ -1,4 +1,4 @@
-#include "julia1.hh"
+﻿#include "julia1.hh"
 #include "../julia.hh"
 #include "../kaleielak.hh"
 
@@ -20,8 +20,8 @@ Julia1::Julia1(const Kaleielak & k)
     };
 
   julia->palette_.add(Pixel(0, 0, 0, 255));
-  julia->palette_.add(Pixel(0, 0, 0, 255));
-  julia->palette_.add(Pixel(0, 0, 0, 255));
+  julia->palette_.add(Pixel(0, 10, 22, 255));
+  julia->palette_.add(Pixel(0, 20, 50, 255));
   julia->palette_.add(Pixel(1, 33, 97, 255));
   julia->palette_.add(Pixel(13, 156, 212, 255));
   julia->palette_.add(Pixel(255, 0, 0, 255));
