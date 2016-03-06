@@ -1,4 +1,5 @@
 ﻿#include <cassert>
+#include <limits>
 
 #include <mimosa/options/options.hh>
 #include <mimosa/log/log.hh>
@@ -132,6 +133,8 @@ Kaleielak::calculateVolume()
   audio_rms_window_ = window;
   audio_rms_num_windows_ = num_windows;
 
+  double rms_max = std::numeric_limits<double>::min();
+
   // calculate RMS volume
   for (int32_t w = 0; w < num_windows; ++w) {
     double rms[num_channels];
@@ -142,7 +145,7 @@ Kaleielak::calculateVolume()
 
     for (int32_t f = 0; f < audio_file_.frames(); ++f) {
       for (int32_t c = 0; c < num_channels; ++c) {
-        double sample = audio_data_[f * num_channels + c];
+        double sample = audio_data_[(w * window + f) * num_channels + c];
         rms[c] += sample * sample;
       }
     }
@@ -150,6 +153,15 @@ Kaleielak::calculateVolume()
     for (int32_t c = 0; c < num_channels; ++c) {
       rms[c] = 20 * std::log10(std::sqrt(rms[c] / (double)window));
       audio_rms_[w * num_channels + c] = rms[c];
+
+      if (rms[c] > rms_max)
+        rms_max = rms[c];
     }
+  }
+
+  // normalize, max = 0;
+  for (int32_t w = 0; w < num_windows; ++w) {
+    for (int32_t c = 0; c < num_channels; ++c)
+      audio_rms_[w * num_channels + c] -= rms_max;
   }
 }
