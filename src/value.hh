@@ -48,6 +48,7 @@ public:
   inline Value(int val) : value_(new DirectValue<int>(val)) {}
   inline Value(uint32_t val) : value_(new DirectValue<uint32_t>(val)) {}
   inline Value(double val = 0) : value_(new DirectValue<double>(val)) {}
+  inline Value(const float *val) : value_(new IndirectValue<const float>(val)) {}
   inline Value(const double *val) : value_(new IndirectValue<const double>(val)) {}
   inline Value(const uint32_t *val) : value_(new IndirectValue<const uint32_t>(val)) {}
   inline Value(AbstractValue *val) : value_(val) {}

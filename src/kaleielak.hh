@@ -23,6 +23,7 @@ public:
   void draw();
   void render();
   void calculateVolume();
+  void syncAudio();
 
   cairo_surface_t *surface_;
   cairo_t         *cr_;
@@ -38,9 +39,11 @@ public:
   SndfileHandle  audio_file_;
   float         *audio_data_ = nullptr;
   float         *audio_rms_  = nullptr;
-  int32_t        audio_rms_window_ = 44100;
+  int32_t        audio_rms_window_ = 2205;
   int32_t        audio_rms_num_windows_ = 0;
   int32_t        audio_rms_index_ = 0;
+  float          audio_rms_left_ = 0;
+  float          audio_rms_right_ = 0;
 };
 
 #endif /* !KALEIELAK_HH */

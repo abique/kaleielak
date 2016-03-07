@@ -10,6 +10,7 @@
 #include "scenes/mandel1.hh"
 #include "scenes/julia1.hh"
 #include "scenes/endless-knot.hh"
+#include "scenes/audio-meter.hh"
 
 struct {
   std::string name;
@@ -25,6 +26,7 @@ struct {
   ENTRY(Mandel1),
   ENTRY(Julia1),
   ENTRY(EndlessKnot),
+  ENTRY(AudioMeter)
 };
 
 void

@@ -1,4 +1,5 @@
 ﻿#include <cassert>
+#include <iostream>
 #include <limits>
 
 #include <mimosa/options/options.hh>
@@ -88,6 +89,8 @@ Kaleielak::render()
     if (!(frame_ % FPS))
       mimosa::log::info("frame %d", frame_);
 
+    syncAudio();
+
     mimosa::log::info("painting");
 
     draw();
@@ -125,7 +128,7 @@ Kaleielak::draw()
 void
 Kaleielak::calculateVolume()
 {
-  const int32_t window = audio_file_.samplerate() / 24;
+  const int32_t window = audio_file_.samplerate() / fps_;
   const int32_t num_windows = audio_file_.frames() / window + 1;
   const int32_t num_channels = audio_file_.channels();
 
@@ -143,7 +146,7 @@ Kaleielak::calculateVolume()
     for (int32_t c = 0; c < num_channels; ++c)
       rms[c] = 0;
 
-    for (int32_t f = 0; f < audio_file_.frames(); ++f) {
+    for (int32_t f = 0; f < window; ++f) {
       for (int32_t c = 0; c < num_channels; ++c) {
         double sample = audio_data_[(w * window + f) * num_channels + c];
         rms[c] += sample * sample;
@@ -164,4 +167,13 @@ Kaleielak::calculateVolume()
     for (int32_t c = 0; c < num_channels; ++c)
       audio_rms_[w * num_channels + c] -= rms_max;
   }
+}
+
+void
+Kaleielak::syncAudio()
+{
+  audio_rms_left_ = audio_rms_[frame_ * audio_file_.channels()];
+  audio_rms_right_ = audio_file_.channels() > 1 ? audio_rms_[frame_ * audio_file_.channels() + 1] : audio_rms_left_;
+
+  //std::cout << audio_rms_left_ << " - " << audio_rms_right_ << std::endl;
 }
